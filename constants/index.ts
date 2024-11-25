@@ -81,4 +81,6 @@ export const sortTypes = [
   },
 ];
 
+export const avatarPlaceholderUrl =
+  "https://img.freepik.com/free-psd/3d-illustration-person-with-glasses-half-shaved-head_23-2149436187.jpg?t=st=1732010638~exp=1732014238~hmac=ef93ed5ae15e4671a37141be95eb1031778ec53f271a5313a50cc02301cc25b7&w=740";
 export const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
