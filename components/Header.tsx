@@ -1,17 +1,17 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import Search from "@/components/Search";
-import FileUploader from "@/components/FileUploader";
+import Link from "next/link";
+import React from "react";
+import Search from "./Search";
+import { Button } from "./ui/button";
+import FileUploader from "./FileUploader";
 import { signOutUser } from "@/lib/actions/user.actions";
 
-const Header = ({
-  userId,
-  accountId,
-}: {
+interface HeaderProps {
   userId: string;
   accountId: string;
-}) => {
+}
+
+const Header = ({ userId, accountId }: HeaderProps) => {
   return (
     <header className="header">
       <Search />
@@ -20,14 +20,13 @@ const Header = ({
         <form
           action={async () => {
             "use server";
-
             await signOutUser();
           }}
         >
           <Button type="submit" className="sign-out-button">
             <Image
               src="/assets/icons/logout.svg"
-              alt="logo"
+              alt="logout"
               width={24}
               height={24}
               className="w-6"
@@ -38,4 +37,5 @@ const Header = ({
     </header>
   );
 };
+
 export default Header;
