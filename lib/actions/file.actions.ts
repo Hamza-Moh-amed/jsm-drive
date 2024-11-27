@@ -6,7 +6,7 @@ import { appwriteConfig } from "@/lib/appwrite/config";
 import { ID, Models, Query } from "node-appwrite";
 import { constructFileUrl, getFileType, parseStringify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
-import { getCurrentUser } from "./user.actions";
+import { getCurrentUser } from "@/lib/actions/user.actions";
 
 const handleError = (error: unknown, message: string) => {
   console.log(error, message);
@@ -78,6 +78,7 @@ const createQueries = (
   if (types.length > 0) queries.push(Query.equal("type", types));
   if (searchText) queries.push(Query.contains("name", searchText));
   if (limit) queries.push(Query.limit(limit));
+
   if (sort) {
     const [sortBy, orderBy] = sort.split("-");
 
@@ -110,6 +111,7 @@ export const getFiles = async ({
       queries
     );
 
+    console.log({ files });
     return parseStringify(files);
   } catch (error) {
     handleError(error, "Failed to get files");
@@ -150,7 +152,7 @@ export const updateFileUsers = async ({
   const { databases } = await createAdminClient();
 
   try {
-    const updateFile = await databases.updateDocument(
+    const updatedFile = await databases.updateDocument(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
       fileId,
@@ -160,7 +162,7 @@ export const updateFileUsers = async ({
     );
 
     revalidatePath(path);
-    return parseStringify(updateFile);
+    return parseStringify(updatedFile);
   } catch (error) {
     handleError(error, "Failed to rename file");
   }
@@ -172,6 +174,7 @@ export const deleteFile = async ({
   path,
 }: DeleteFileProps) => {
   const { databases, storage } = await createAdminClient();
+
   try {
     const deletedFile = await databases.deleteDocument(
       appwriteConfig.databaseId,
@@ -186,10 +189,11 @@ export const deleteFile = async ({
     revalidatePath(path);
     return parseStringify({ status: "success" });
   } catch (error) {
-    handleError(error, "Failed to delete File");
+    handleError(error, "Failed to rename file");
   }
 };
 
+// ============================== TOTAL FILE SPACE USED
 export async function getTotalSpaceUsed() {
   try {
     const { databases } = await createSessionClient();
