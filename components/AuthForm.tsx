@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,9 +18,9 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { createAccount, signInUser } from "@/lib/actions/user.actions";
-import OTPModal from "./OTPModal";
+import OtpModal from "@/components/OTPModal";
 
-//TODO: Submit on Enter
+type FormType = "sign-in" | "sign-up";
 
 const authFormSchema = (formType: FormType) => {
   return z.object({
@@ -33,14 +32,12 @@ const authFormSchema = (formType: FormType) => {
   });
 };
 
-type FormType = "sign-in" | "sign-up";
-
 const AuthForm = ({ type }: { type: FormType }) => {
-  const formSchema = authFormSchema(type);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [accountId, setAccountId] = useState(null);
-  // 1. Define your form.
+
+  const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,11 +61,12 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
       setAccountId(user.accountId);
     } catch {
-      setErrorMessage("Failed to create an account. Please try again.");
+      setErrorMessage("Failed to create account. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <>
       <Form {...form}>
@@ -99,6 +97,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
               )}
             />
           )}
+
           <FormField
             control={form.control}
             name="email"
@@ -109,7 +108,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
                   <FormControl>
                     <Input
-                      placeholder="Enter your Email"
+                      placeholder="Enter your email"
                       className="shad-input"
                       {...field}
                     />
@@ -126,22 +125,21 @@ const AuthForm = ({ type }: { type: FormType }) => {
             className="form-submit-button"
             disabled={isLoading}
           >
-            {isLoading ? (
-              <>
-                {type === "sign-in" ? "Signing in" : "Signing up"}
-                <Image
-                  src="/assets/icons/loader.svg"
-                  alt="loader"
-                  width={24}
-                  height={24}
-                  className="animate-spin ml-2"
-                />
-              </>
-            ) : (
-              <>{type === "sign-in" ? "Sign in" : "Sign up"}</>
+            {type === "sign-in" ? "Sign In" : "Sign Up"}
+
+            {isLoading && (
+              <Image
+                src="/assets/icons/loader.svg"
+                alt="loader"
+                width={24}
+                height={24}
+                className="ml-2 animate-spin"
+              />
             )}
           </Button>
+
           {errorMessage && <p className="error-message">*{errorMessage}</p>}
+
           <div className="body-2 flex justify-center">
             <p className="text-light-100">
               {type === "sign-in"
@@ -152,13 +150,15 @@ const AuthForm = ({ type }: { type: FormType }) => {
               href={type === "sign-in" ? "/sign-up" : "/sign-in"}
               className="ml-1 font-medium text-brand"
             >
+              {" "}
               {type === "sign-in" ? "Sign Up" : "Sign In"}
             </Link>
           </div>
         </form>
       </Form>
+
       {accountId && (
-        <OTPModal email={form.getValues("email")} accountId={accountId} />
+        <OtpModal email={form.getValues("email")} accountId={accountId} />
       )}
     </>
   );

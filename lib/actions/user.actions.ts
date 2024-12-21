@@ -5,6 +5,7 @@ import { appwriteConfig } from "@/lib/appwrite/config";
 import { Query, ID } from "node-appwrite";
 import { parseStringify } from "@/lib/utils";
 import { cookies } from "next/headers";
+import { avatarPlaceholderUrl } from "@/constants";
 import { redirect } from "next/navigation";
 
 const getUserByEmail = async (email: string) => {
@@ -58,7 +59,7 @@ export const createAccount = async ({
       {
         fullName,
         email,
-        avatar: "",
+        avatar: avatarPlaceholderUrl,
         accountId,
       }
     );
@@ -111,6 +112,7 @@ export const getCurrentUser = async () => {
     console.log(error);
   }
 };
+
 export const signOutUser = async () => {
   const { account } = await createSessionClient();
 
